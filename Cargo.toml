@@ -1,0 +1,21 @@
+[package]
+name = "union_type"
+version = "0.0.0"
+authors = ["longfangsong <longfangsong@icloud.com>"]
+description = "A proc macro to introduce union type into "
+keywords = ["proc_macro", "procmacro"]
+edition = "2018"
+
+[lib]
+proc-macro = true
+
+[dependencies]
+quote = "1"
+proc-macro2 = "1.0"
+syn = { version = "1.0", features = ["full"] }
+
+
+[workspace]
+members = [
+    "test"
+]
