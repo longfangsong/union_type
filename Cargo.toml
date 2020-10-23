@@ -2,7 +2,9 @@
 name = "union_type"
 version = "0.0.0"
 authors = ["longfangsong <longfangsong@icloud.com>"]
-description = "A proc macro to introduce union type into "
+repository = "https://github.com/longfangsong/union_type"
+description = "A proc macro to introduce union type into rust"
+license-file = "LICENSE"
 keywords = ["proc_macro", "procmacro"]
 edition = "2018"
 
@@ -13,7 +15,6 @@ proc-macro = true
 quote = "1"
 proc-macro2 = "1.0"
 syn = { version = "1.0", features = ["full"] }
-
 
 [workspace]
 members = [
