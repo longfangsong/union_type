@@ -1,5 +1,9 @@
 # union_type
 
+[![license](https://img.shields.io/github/license/longfangsong/union_type.svg)](https://github.com/longfangsong/union_type/blob/master/LICENSE)
+[![Crates.io](https://img.shields.io/crates/v/union_type.svg)](https://crates.io/crates/union_type)
+[![Docs.rs](https://docs.rs/union_type/badge.svg)](https://docs.rs/union_type/)
+
 Add union type support to rust!
 
 ## Why we need this?

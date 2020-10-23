@@ -90,6 +90,38 @@ fn union_method<'a>(impl_item_method: &'a ImplItemMethod, union_type_name: &'a I
     }
 }
 
+/// To make a enum a "union type"
+/// Assume there exists an A type and a B type,
+/// both of them has implemented `fn` `f` and `g`
+/// ```rust, no_run
+/// union_type! {
+///     #[derive(Debug, Clone)]
+///     enum C {
+///         A,
+///         B
+///     }
+///     impl C {
+///         fn f(&self) -> i32;
+///         fn g<T: Display>(&self, t: T) -> String;
+///     }
+/// }
+/// ```
+/// Then type C becomes an union type, you can cast from and into C with A and B:
+/// ```rust, no_run
+/// let a = A::new();
+/// let mut c: C = a.into();
+/// let b = c.try_into();               // cause an Err
+/// let a: A = c.try_into().unwrap();   // successful
+/// ```
+/// And will call its child type's function when:
+/// ```rust, no_run
+/// let a = A::new();
+/// let mut c: C = a.into();
+/// c.f(); // equivalent with call a.f()
+/// let b = B::new();
+/// c = b.into();
+/// c.f(); // equivalent with call b.f()
+/// ```
 #[proc_macro]
 pub fn union_type(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as UnionType);
