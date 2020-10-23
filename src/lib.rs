@@ -39,9 +39,24 @@ fn argument_names(parameters: &Punctuated<FnArg, Token![,]>) -> Vec<&Ident> {
 
 fn impl_from(union_type_name: &Ident, subtype_name: &Ident) -> TokenStream2 {
     quote! {
-        impl From<#subtype_name> for #union_type_name {
+        impl std::convert::From<#subtype_name> for #union_type_name {
             fn from(x: #subtype_name) -> Self {
                 #union_type_name::#subtype_name(x)
+            }
+        }
+    }
+}
+
+fn impl_reverse_try_from(union_type_name: &Ident, subtype_name: &Ident) -> TokenStream2 {
+    quote! {
+        impl std::convert::TryFrom<#union_type_name> for #subtype_name {
+            type Error = ();
+            fn try_from(x: #union_type_name) -> Result<Self, Self::Error> {
+                if let #union_type_name::#subtype_name(x) = x {
+                    Ok(x)
+                } else {
+                    Err(())
+                }
             }
         }
     }
@@ -110,6 +125,12 @@ pub fn union_type(input: TokenStream) -> TokenStream {
             acc.extend(x.into_iter());
             acc
         });
+    let impl_reverse_try_froms = subtypes.clone()
+        .map(|it| impl_reverse_try_from(typename, it))
+        .fold(TokenStream2::new(), |mut acc, x| {
+            acc.extend(x.into_iter());
+            acc
+        });
     let tokens = quote! {
         #attrs
         #visibility enum #typename {
@@ -121,6 +142,8 @@ pub fn union_type(input: TokenStream) -> TokenStream {
         }
 
         #impl_froms
+
+        #impl_reverse_try_froms
     };
     tokens.into()
 }

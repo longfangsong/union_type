@@ -1,6 +1,7 @@
 #[macro_use]
 extern crate union_type;
 
+use std::convert::TryInto;
 use std::fmt::Display;
 
 #[derive(Debug, Clone)]
@@ -22,8 +23,8 @@ struct B(i32);
 
 impl B {
     fn f(&self, a: i32) -> i32 {
-        println!("from B {}", a + &self.0);
-        a + &self.0
+        println!("from B {}", a + self.0);
+        a + self.0
     }
 
     fn g<T: Display>(&self, t: T) -> String {
@@ -52,4 +53,6 @@ fn main() {
     c.f(2);
     println!("{:?}", c);
     println!("{}", c.g(99));
+    let b: B = c.try_into().unwrap();
+    println!("{:?}", b);
 }
