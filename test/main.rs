@@ -1,6 +1,7 @@
 #[macro_use]
 extern crate union_type;
 
+#[derive(Debug, Clone)]
 struct A(String);
 
 impl A {
@@ -10,6 +11,7 @@ impl A {
     }
 }
 
+#[derive(Debug, Clone)]
 struct B(i32);
 
 impl B {
@@ -20,11 +22,11 @@ impl B {
 }
 
 union_type! {
+    #[derive(Debug, Clone)]
     enum C {
         A,
         B
     }
-
     impl C {
         fn f(&self, a: i32) -> i32;
     }
