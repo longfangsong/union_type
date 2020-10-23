@@ -37,6 +37,16 @@ fn argument_names(parameters: &Punctuated<FnArg, Token![,]>) -> Vec<&Ident> {
         .collect()
 }
 
+fn impl_from(union_type_name: &Ident, subtype_name: &Ident) -> TokenStream2 {
+    quote! {
+        impl From<#subtype_name> for #union_type_name {
+            fn from(x: #subtype_name) -> Self {
+                #union_type_name::#subtype_name(x)
+            }
+        }
+    }
+}
+
 fn union_method<'a>(impl_item_method: &'a ImplItemMethod, union_type_name: &'a Ident, subtypes: impl Iterator<Item=&'a Ident>) -> TokenStream2 {
     let attrs = &impl_item_method.attrs.iter()
         .map(|it| quote! {#it})
@@ -94,6 +104,12 @@ pub fn union_type(input: TokenStream) -> TokenStream {
             acc.extend(x.into_iter());
             acc
         });
+    let impl_froms = subtypes.clone()
+        .map(|it| impl_from(typename, it))
+        .fold(TokenStream2::new(), |mut acc, x| {
+            acc.extend(x.into_iter());
+            acc
+        });
     let tokens = quote! {
         #attrs
         #visibility enum #typename {
@@ -103,6 +119,8 @@ pub fn union_type(input: TokenStream) -> TokenStream {
         impl #typename {
             #impl_functions_token_stream
         }
+
+        #impl_froms
     };
     tokens.into()
 }

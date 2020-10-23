@@ -1,6 +1,8 @@
 #[macro_use]
 extern crate union_type;
 
+use std::fmt::Display;
+
 #[derive(Debug, Clone)]
 struct A(String);
 
@@ -8,6 +10,10 @@ impl A {
     fn f(&self, a: i32) -> i32 {
         println!("from A {}", a + 1);
         a + 1
+    }
+
+    fn g<T: Display>(&self, t: T) -> String {
+        self.0.clone() + &format!("{}", t)
     }
 }
 
@@ -19,6 +25,10 @@ impl B {
         println!("from B {}", a + &self.0);
         a + &self.0
     }
+
+    fn g<T: Display>(&self, t: T) -> String {
+        format!("{}:{}", self.0, t)
+    }
 }
 
 union_type! {
@@ -29,14 +39,17 @@ union_type! {
     }
     impl C {
         fn f(&self, a: i32) -> i32;
+        fn g<T: Display>(&self, t: T) -> String;
     }
 }
 
 fn main() {
     let a = A("abc".to_string());
-    let c = C::A(a);
+    let mut c: C = a.into();
     c.f(1);
     let b = B(99);
-    let c = C::B(b);
+    c = b.into();
     c.f(2);
+    println!("{:?}", c);
+    println!("{}", c.g(99));
 }
