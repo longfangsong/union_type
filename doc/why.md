@@ -66,6 +66,9 @@ but it turns out that there are so many limitations for traits,
 for example, sometimes methods in traits cannot handle type parameters when return a dyn reference,
 see the discussion [here](https://github.com/tikv/tikv/pull/8296#discussion_r462040210).
 
+So althoug we make a [`CommandExt`](https://github.com/tikv/tikv/blob/fcb2791312203f40167a92bc9bf4c4421e72ecad/src/storage/txn/commands/mod.rs#L402) trait here, 
+we still find it hard to remove the `Command` enum, and has to use [match](https://github.com/tikv/tikv/blob/a69dd472859004811477bb2291d1ef6260ac6ec2/src/storage/txn/commands/mod.rs#L441) to convert `Command`s into `&dyn CommandExt`s. Which does not reach our target of eliminating all matches.
+
 ## What's wrong with these solutions?
 
 Well, I think the enums in Rust is kind of sum type, 
