@@ -57,6 +57,8 @@ pub fn process_write<S: Snapshot, L: LockManager, P: PdClient + 'static>(
 }
 ```
 
+Every arm in this `match` call to `process_write` with the same arguments. Which seems repeatitive.
+
 ## So how about using traits and dynamic dispatch?
 
 We do tried to do dynamic dispatch in TiKV,
@@ -70,12 +72,15 @@ Well, I think the enums in Rust is kind of sum type,
 or **tagged** union type, which
 needs to be `match`ed before using any method on 
 its children type, even if there exists such a method on all its children type.
+This is reasonable but inconvinient in some situation.
 
 On the other hand, traits and dynamic dispatch are language features that 
 aimed for "extending", it do describe shared behaviour between types,
 but its more like something to describe a "protocol" to make some "unknown"
 custom type working with your existing code, and **open** for other parts of the program.
-There could be unlimited different types to implement some certain trait. But sometimes
+But sometimes we don't really want the users to extend a type,
+expecially for types which all its variants are known in the first place
+and are used internally or not exposing to other crates, 
 
 ## So what do we need?
 
@@ -86,4 +91,4 @@ Or we can say "**untagged**", "**closed**" union type.
 And we can uses a certain method if and only if it exists on all these types,
 these methods should be "automatically" become usable, without using `match` to get the actual child type.
 
-By using macros, we can bring part of this feature to rust.
+By using macros, we can bring part of this feature to rust. And we come to this crate.
